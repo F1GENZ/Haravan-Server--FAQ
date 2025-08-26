@@ -101,10 +101,10 @@ export class HaravanAPIService {
     let queryString = "";
     switch (type) {
       case "shop":
-        queryString = `https://apis.haravan.com/com/metafields.json?owner_resource=shop`;
+        queryString = `https://apis.haravan.com/com/metafields.json?owner_resource=shop&namespace=store.faqs.data`;
         break;
       default:
-        queryString = `https://apis.haravan.com/com/${type}/${objectid}/metafields.json`;
+        queryString = `https://apis.haravan.com/com/${type}/${objectid}/metafields.json&namespace=store.faqs.data`;
         break;
     }
 
