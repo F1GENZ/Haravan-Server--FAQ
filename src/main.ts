@@ -11,7 +11,9 @@ const allowedOrigins = [
   'http://localhost', 
   'http://localhost:5173',
   'https://haravan-client--faq.pages.dev',
-  'https://haravan.faq.f1genz.com'
+  'https://haravan-client--faq.pages.dev/',
+  'https://haravan.faq.f1genz.com',
+  'https://haravan.faq.f1genz.com/'
 ];
  
 async function bootstrap() {
