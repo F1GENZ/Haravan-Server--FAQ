@@ -10,8 +10,8 @@ const allowedOrigins = [
   'ionic://localhost',
   'http://localhost', 
   'http://localhost:5173',
-  'https://client--currency-converter.pages.dev',
-  'https://currency.f1genz.com'
+  'https://haravan-client--faq.pages.dev',
+  'https://haravan.faq.f1genz.com/'
 ];
  
 async function bootstrap() {
