@@ -15,7 +15,7 @@ export class HaravanCronService {
   async handleCron() {
     try {
       this.logger.log('Cron job started');
-      const apps = await this.redisService.getKeys('app_install:*');
+      const apps = await this.redisService.getKeys('haravan:faq:app_install:*');
       if (apps.length === 0) return;
 
       await Promise.all(apps.map(async (app) => {
