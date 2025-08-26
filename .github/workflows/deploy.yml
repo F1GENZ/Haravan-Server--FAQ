@@ -1,4 +1,4 @@
-name: 🚀 Deploy App Currency to DO VPS
+name: 🚀 Deploy App Haravan FAQ to DO VPS
 
 on:
   push:
@@ -30,6 +30,6 @@ jobs:
             npm install
             npm run build
 
-            pm2 restart currency-converter || pm2 start dist/main.js --name currency-converter --watch --env production -- --port=3000
+            pm2 restart haravan-faq || pm2 start dist/main.js --name haravan-faq --watch --env production -- --port=3000
             pm2 save
           EOF
