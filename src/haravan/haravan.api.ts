@@ -169,4 +169,38 @@ export class HaravanAPIService {
     if (!response.data) throw new BadRequestException("Failed to delete metafield");
     return response.data;
   }
+
+  async searchProducts(token: string, query: string, limit: number = 10) {
+    if (!token) throw new BadRequestException("Token is required");
+    if (!query || query.trim() === '') {
+      return { products: [] };
+    }
+
+    const searchQuery = encodeURIComponent(query.trim());
+    const url = `https://apis.haravan.com/com/products.json?query=${searchQuery}&limit=${limit}&fields=id,title,handle,images,variants`;
+    
+    try {
+      const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (!response.data || !response.data.products) {
+        return { products: [] };
+      }
+      
+      // Format products for easier use
+      const products = response.data.products.map((product: any) => ({
+        id: product.id,
+        title: product.title,
+        handle: product.handle,
+        image: product.images && product.images.length > 0 ? product.images[0].src : null,
+        price: product.variants && product.variants.length > 0 ? product.variants[0].price : null,
+      }));
+      
+      return { products };
+    } catch (error) {
+      console.error('Error searching products:', error);
+      return { products: [] };
+    }
+  }
 }

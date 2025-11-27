@@ -1,6 +1,7 @@
 import { Controller, Response, Get, Query, Post, Request, UseGuards, Headers, Body } from '@nestjs/common';
 import { HaravanService } from './haravan.service';
 import { ShopAuthGuard } from '../common/guards/shop-auth.guard';
+import { ShopAuth } from '../common/decorators/shop-auth.decorator';
 
 @Controller('/oauth/install') 
 export class HaravanController {
@@ -50,6 +51,19 @@ export class HaravanController {
     return {
       success: true,
       data: await this.haravanService.setTrialUnlimited(orgId),
+      status: 200,
+      errorCode: null,
+      errorMessage: null,
+    };
+  }
+
+  @Get("/products/search")
+  @UseGuards(ShopAuthGuard)
+  async searchProducts(@ShopAuth() token: string, @Query() query: any) {
+    const { q, limit } = query;
+    return {
+      success: true,
+      data: await this.haravanService.searchProducts(token, q || '', limit ? parseInt(limit) : 10),
       status: 200,
       errorCode: null,
       errorMessage: null,

@@ -239,4 +239,8 @@ export class HaravanService {
       throw new BadRequestException('Failed to set trial unlimited');
     }
   }
+
+  async searchProducts(token: string, query: string, limit: number = 10): Promise<any> {
+    return await this.haravanAPIService.searchProducts(token, query, limit);
+  }
 }
