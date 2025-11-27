@@ -178,4 +178,65 @@ export class HaravanService {
       console.error(error);
     }
   }
+
+  async getTrialInfo(orgid: string): Promise<any> {
+    try {
+      const appData = await this.redisService.get(`haravan:faq:app_install:${orgid}`);
+      if (!appData) {
+        return {
+          status: 'not_found',
+          expires_at: null,
+          days_remaining: 0,
+          is_unlimited: false,
+        };
+      }
+
+      const { status, expires_at } = appData;
+      // Check if unlimited: null, undefined, 0, or very large number (far future)
+      const isUnlimited = expires_at === null || expires_at === undefined || expires_at === 0 || expires_at > Date.now() + (365 * 24 * 60 * 60 * 1000 * 100); // 100 years
+      
+      let daysRemaining = 0;
+      if (!isUnlimited) {
+        const now = Date.now();
+        const diff = expires_at - now;
+        daysRemaining = Math.max(0, Math.ceil(diff / (24 * 60 * 60 * 1000)));
+      }
+
+      return {
+        status: status || 'trial',
+        expires_at: expires_at || null,
+        days_remaining: isUnlimited ? -1 : daysRemaining, // -1 means unlimited
+        is_unlimited: isUnlimited,
+      };
+    } catch (error) {
+      console.error('Error getting trial info:', error);
+      throw new BadRequestException('Failed to get trial information');
+    }
+  }
+
+  async setTrialUnlimited(orgid: string): Promise<any> {
+    try {
+      const appData = await this.redisService.get(`haravan:faq:app_install:${orgid}`);
+      if (!appData) {
+        throw new BadRequestException('App installation not found');
+      }
+
+      // Set expires_at to null (0) to indicate unlimited
+      appData.status = 'active';
+      appData.expires_at = null; // null means unlimited
+      
+      await this.redisService.set(`haravan:faq:app_install:${orgid}`, appData, 30 * 24 * 60 * 60); // 30 days
+
+      return {
+        success: true,
+        message: 'Trial has been set to unlimited',
+        status: 'active',
+        expires_at: null,
+        is_unlimited: true,
+      };
+    } catch (error) {
+      console.error('Error setting trial unlimited:', error);
+      throw new BadRequestException('Failed to set trial unlimited');
+    }
+  }
 }

@@ -1,5 +1,6 @@
-import { Controller, Response, Get, Query, Post, Request } from '@nestjs/common';
+import { Controller, Response, Get, Query, Post, Request, UseGuards, Headers, Body } from '@nestjs/common';
 import { HaravanService } from './haravan.service';
+import { ShopAuthGuard } from '../common/guards/shop-auth.guard';
 
 @Controller('/oauth/install') 
 export class HaravanController {
@@ -27,5 +28,31 @@ export class HaravanController {
   async postWebhook(@Request() req, @Response() res) {
     const { headers, body } = req;
     return await this.haravanService.handleWebhook(headers, body);
+  }
+
+  @Get("/trial")
+  @UseGuards(ShopAuthGuard)
+  async getTrialInfo(@Query() query, @Headers('orgid') orgid: string) {
+    const orgId = query.orgid || orgid;
+    return {
+      success: true,
+      data: await this.haravanService.getTrialInfo(orgId),
+      status: 200,
+      errorCode: null,
+      errorMessage: null,
+    };
+  }
+
+  @Post("/trial/unlimited")
+  @UseGuards(ShopAuthGuard)
+  async setTrialUnlimited(@Body() body: any, @Headers('orgid') orgid: string, @Query() query: any) {
+    const orgId = body.orgid || query.orgid || orgid;
+    return {
+      success: true,
+      data: await this.haravanService.setTrialUnlimited(orgId),
+      status: 200,
+      errorCode: null,
+      errorMessage: null,
+    };
   }
 }
